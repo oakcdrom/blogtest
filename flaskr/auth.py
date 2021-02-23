@@ -43,8 +43,8 @@ def register():
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
-        username = request.form('username')
-        password = request.form('password')
+        username = request.form.get('username')
+        password = request.form.get('password')
         db = get_db()
         error = None
         user = db.execute(

@@ -24,12 +24,12 @@ def index():
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
-    if request.method == 'POST'
+    if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        error =None
+        error = None
 
-        if not title"
+        if not title:
             error = '请输入文章标题'
         
         if error is not None:
@@ -43,7 +43,7 @@ def create():
             )
             db.commit()
             return redirect(url_for('blog.index'))
-        return render_template('blog/create.html')
+    return render_template('blog/create.html')
 
 # 更新文章
 def get_post(id, check_author=True):
