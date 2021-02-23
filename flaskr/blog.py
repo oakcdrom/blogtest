@@ -37,8 +37,7 @@ def create():
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)', 
+                'INSERT INTO post (title, body, author_id) VALUES (?, ?, ?)', 
                 (title, body, g.user['id'])
             )
             db.commit()
@@ -47,21 +46,33 @@ def create():
 
 # 更新文章
 def get_post(id, check_author=True):
-    post = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id = ?',
-        (id,)
-    ).fetchall()
+    """Get a post and its author by id.
+    Checks that the id exists and optionally that the current user is
+    the author.
+    :param id: id of post to get
+    :param check_author: require the current user to be the author
+    :return: the post with author information
+    :raise 404: if a post with the given id doesn't exist
+    :raise 403: if the current user isn't the author
+    """
+    post = (
+        get_db()
+        .execute(
+            "SELECT p.id, title, body, created, author_id, username"
+            " FROM post p JOIN user u ON p.author_id = u.id"
+            " WHERE p.id = ?",
+            (id,),
+        )
+        .fetchone()
+    )
 
     if post is None:
-        abort(404, "文章 id {0} 不存在".format(id))
-    
-    if check_author and post['author_id'] != g.user['id']:
-        abort(403)
-    
-    return post
+        abort(404, "Post id {0} doesn't exist.".format(id))
 
+    if check_author and post["author_id"] != g.user["id"]:
+        abort(403)
+
+    return post
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
@@ -80,9 +91,7 @@ def update(id):
         else:
             db =get_db()
             db.execute(
-                'UPDATE post SET title = ?, body = ?'
-                'WHERE id = ?',
-                (title , body, id)
+                'UPDATE post SET title = ?, body = ? WHERE id = ?', (title , body, id)
             )
             db.commit()
             return redirect(url_for('blog.index'))
