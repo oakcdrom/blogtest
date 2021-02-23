@@ -5,6 +5,7 @@
 
 截图：
 
+![image](https://github.com/oakcdrom/blogtest/blob/main/1614064591286.jpg)
 
 问题：
 1. 修复无法登录问题。
